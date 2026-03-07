@@ -11,17 +11,30 @@
 <h1>Simulateur de Consommation Électrique</h1>
 
 <div class="container">
-  <input type="number" id="puissance" placeholder="Puissance (en watts)">
-  <input type="number" id="heures" placeholder="Heures par jour">
-  <input type="number" id="jours" placeholder="Nombre de jours">
 
-  <button onclick="calculer()">Calculer</button>
+<h2>Ajouter un appareil</h2>
 
-  <div id="resultat"></div>
+<input type="text" id="nom" placeholder="Nom de l'appareil">
+<input type="number" id="puissance" placeholder="Puissance (W)">
+<input type="number" id="heures" placeholder="Heures par jour">
+
+<button onclick="ajouterAppareil()">Ajouter appareil</button>
+
+<h3>Appareils :</h3>
+<ul id="liste"></ul>
+
+<input type="number" id="jours" placeholder="Nombre de jours">
+
+<button onclick="calculerTotal()">Calculer consommation</button>
+
+<div id="resultat"></div>
+
 </div>
 
-<script src="script.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="script.js"></script>
+
 <canvas id="monGraphique"></canvas>
+
 </body>
 </html>
