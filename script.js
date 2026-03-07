@@ -1,43 +1,100 @@
-let monGraphique;
+let appareils = [];
+let monGraphique = null;
 
-function calculer() {
+function ajouterAppareil() {
 
-  let puissance = parseFloat(document.getElementById("puissance").value);
-  let heures = parseFloat(document.getElementById("heures").value);
-  let jours = parseFloat(document.getElementById("jours").value);
+  const nom = document.getElementById("nom").value;
+  const puissance = parseFloat(document.getElementById("puissance").value);
+  const heures = parseFloat(document.getElementById("heures").value);
 
-  if (isNaN(puissance) || isNaN(heures) || isNaN(jours)) {
-    document.getElementById("resultat").innerHTML =
-      "Veuillez remplir tous les champs correctement.";
+  if (!nom || isNaN(puissance) || isNaN(heures)) {
+    alert("Veuillez remplir tous les champs correctement.");
     return;
   }
 
-  let consommation = (puissance * heures * jours) / 1000;
-  let cout = consommation * 0.23;
+  appareils.push({ nom, puissance, heures });
 
-  document.getElementById("resultat").innerHTML =
-    `<p>Consommation : ${consommation.toFixed(2)} kWh</p>
-     <p>Coût estimé : ${cout.toFixed(2)} €</p>`;
+  afficherListe();
 
-  afficherGraphique(consommation);
+  document.getElementById("nom").value = "";
+  document.getElementById("puissance").value = "";
+  document.getElementById("heures").value = "";
 }
 
-function afficherGraphique(consommation) {
+function afficherListe() {
 
-  let ctx = document.getElementById('monGraphique').getContext('2d');
+  const liste = document.getElementById("liste");
+  liste.innerHTML = "";
+
+  appareils.forEach(appareil => {
+
+    const li = document.createElement("li");
+
+    li.textContent =
+      appareil.nom +
+      " - " +
+      appareil.puissance +
+      "W - " +
+      appareil.heures +
+      "h/jour";
+
+    liste.appendChild(li);
+
+  });
+
+}
+
+function calculerTotal() {
+
+  const jours = parseFloat(document.getElementById("jours").value);
+
+  if (isNaN(jours)) {
+    alert("Veuillez entrer un nombre de jours.");
+    return;
+  }
+
+  let consommationMensuelle = 0;
+
+  appareils.forEach(appareil => {
+
+    consommationMensuelle +=
+      (appareil.puissance * appareil.heures * jours) / 1000;
+
+  });
+
+  const consommationAnnuelle = consommationMensuelle * 12;
+
+  const coutMensuel = consommationMensuelle * 0.23;
+  const coutAnnuel = consommationAnnuelle * 0.23;
+
+  document.getElementById("resultat").innerHTML = `
+    <p>Consommation mensuelle : ${consommationMensuelle.toFixed(2)} kWh</p>
+    <p>Consommation annuelle : ${consommationAnnuelle.toFixed(2)} kWh</p>
+    <p>Coût mensuel estimé : ${coutMensuel.toFixed(2)} €</p>
+    <p>Coût annuel estimé : ${coutAnnuel.toFixed(2)} €</p>
+  `;
+
+  afficherGraphique(consommationMensuelle, consommationAnnuelle);
+
+}
+
+function afficherGraphique(mensuelle, annuelle) {
+
+  const ctx = document.getElementById("monGraphique").getContext("2d");
 
   if (monGraphique) {
     monGraphique.destroy();
   }
 
   monGraphique = new Chart(ctx, {
-    type: 'bar',
+    type: "bar",
     data: {
-      labels: ['Consommation (kWh)'],
+      labels: ["Mensuelle", "Annuelle"],
       datasets: [{
-        label: 'Consommation',
-        data: [consommation],
+        label: "Consommation (kWh)",
+        data: [mensuelle, annuelle]
       }]
     }
   });
+
 }
